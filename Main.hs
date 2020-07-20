@@ -18,7 +18,7 @@ outputFilePath :: FilePath
 outputFilePath = "output.bin"
                          
 volume :: Float
-volume = 0.2
+volume = 1
 
 sampleRate :: Samples
 sampleRate = 48000.0
@@ -33,13 +33,13 @@ attackDurationPercent :: Float
 attackDurationPercent = 0.01
 
 decayDurationPercent :: Float
-decayDurationPercent = 0.8
+decayDurationPercent = 0.5
 
 sustainLevelPercent :: Float
-sustainLevelPercent = 1.0
+sustainLevelPercent = 0.5
 
 releaseDurationPercent :: Float
-releaseDurationPercent = 0.01
+releaseDurationPercent = 0.2
 
 -- The A above the middle C (A_4)
 pitchStandard :: Hz
@@ -72,7 +72,7 @@ freq hz duration =
     decay :: [Pulse]
     decay = concat [take (round attackLength) (repeat 1.0),
                     [1, 1 - decayStep .. sustainLevelPercent],
-                    repeat 1.0]
+                    repeat sustainLevelPercent]
     
     releaseLength = releaseDurationPercent * samples -- No of samples release should last for
     releaseStep = sustainLevelPercent/releaseLength
@@ -120,6 +120,7 @@ wave =
     , note 0 0.5
     ]
 
+
 -- Megalovania
 hehehe :: [Pulse]
 hehehe =
@@ -154,8 +155,9 @@ test =
          , note (-4) 1
          ]
 
+
 save :: FilePath -> IO ()
-save filePath = B.writeFile filePath $ B.toLazyByteString $ fold $ map B.floatLE test
+save filePath = B.writeFile filePath $ B.toLazyByteString $ fold $ map B.floatLE wave
 
 play :: IO ()
 play = do
